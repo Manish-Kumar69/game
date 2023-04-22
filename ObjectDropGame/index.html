@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Ball Clicker Game</title>
+    <style>
+        #game-board {
+            position: relative;
+            width: 600px;
+            height: 400px;
+            border: 1px solid black;
+            margin: 0 0 0 100px;
+        }
+
+        .ball {
+            position: absolute;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background-color: red;
+        }
+
+        #stop {
+            position: absolute;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        #scoreBoard {
+            margin-top: 2%;
+            font-weight: bold;
+            font-size: large;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>Ball Clicker Game</h1>
+    <div id="game-board">
+    </div>
+    <button onclick="stopGame(true)" id="stop">Stop Game</button>
+
+    <p id="scoreBoard">
+         
+    </p>
+    <script>
+        let stopClick=false;
+        const gameBoard = document.getElementById("game-board");
+        const scoreBoard = document.getElementById("scoreBoard");
+        let score = 0;
+        let balls = [];
+
+        // Add event listener to game board
+        gameBoard.addEventListener("click", handleClick);
+
+        // Start game loop
+        let game_is_Running = setInterval(() => {
+            spawnBall();
+            moveBalls();
+            checkCollisions();
+        }, 1000 );
+
+        // Spawn a new ball at a random position at the top of the screen
+        function spawnBall() {
+            const ball = document.createElement("div");
+            ball.classList.add("ball");
+            ball.style.top = "0px";
+            ball.style.left = Math.floor(Math.random() * 550) + "px";
+            gameBoard.appendChild(ball);
+            balls.push(ball);
+        }
+
+        // Move all balls down by 5 pixels
+        function moveBalls() {
+            for (const ball of balls) {
+                const top = parseInt(ball.style.top);
+                ball.style.top = top + 10 + "px";
+            }
+        }
+
+        // Check for collisions with bottom of screen or clicks on balls
+        function checkCollisions() {
+            console.log("Checking the collisions")
+            for (let i = balls.length - 1; i >= 0; i--) {
+                const ball = balls[i];
+                const top = parseInt(ball.style.top);
+                if (top >= 350) {
+                    gameOver();
+                    break;
+                }
+                //   const clicked = ball.contains(event.target);
+                //   if (clicked) {
+                //     ball.remove();
+                //     balls.splice(i, 1);
+                //     score++;
+                //   }
+            }
+        }
+
+        // Game over function
+        function gameOver() {
+
+            stopGame(false);
+            scoreBoard.append(" Game over! Reload To Play Again");
+            //location.reload();
+        }
+
+        // Handle clicks on game board
+        function handleClick(event) {
+            console.log(event);
+            const clicked = event.target.classList.contains("ball");
+            
+            if(stopClick){
+                event.stopPropagation()
+            }else{
+                if (clicked) {
+                event.target.remove();
+                balls.splice(balls.indexOf(event.target), 1);
+                score++;
+                scoreBoard. innerHTML=" Your score is " + score;
+            }
+            }
+        }
+
+        // Stop Game
+        function stopGame(flg) {
+
+            if(flg){
+
+                scoreBoard.append(" Game over! Reload To Play Again");
+                
+            }
+            clearInterval(game_is_Running);
+            stopClick=true;
+           
+        }
+
+    </script>
+</body>
+
+</html>
